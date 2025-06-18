@@ -1,4 +1,0 @@
-{
-    "appService.defaultWebAppToDeploy": "/subscriptions/3e62e685-8c94-4d34-815f-5d217b378061/resourceGroups/AOAI-AppEnv-handson/providers/Microsoft.Web/sites/botApp-20250606t041655z",
-    "appService.deploySubpath": "."
-}
