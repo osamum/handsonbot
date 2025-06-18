@@ -37,6 +37,7 @@ async function findIndex(queryText) {
         //スコアがしきい値以上の場合は、検索結果を付加して言語モデルに回答の生成を依頼するメッセージを返す
         //意図した判断とならない場合は、console.log(result.score) でスコアを確認して thresholdScore の値を調整
         if (result != null && result.score >= thresholdScore) {
+            console.log('Found it in RAG data.');
             return '以下の [question] の内容に対し、[content]の内容を使用して回答してください。'
                 + 'ただし[question]に対し[content]の内容に回答に必要な情報がないと判断した場合は[content]の内容を無視して回答してください\n\n'
                 + `[question]\n${queryText}\n\n[content]\n${result.document.chunk}`;

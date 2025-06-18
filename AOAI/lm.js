@@ -154,6 +154,7 @@ if (imageGen.isAvailable) {
 
 //実際の関数を呼び出す
 async function routingFunctions(name, args) {
+    console.log('Function Calling: ' + name);
     switch (name) {
         case 'get_GitHubUser_info':
             return JSON.stringify(await myFunctions.getGitHubUserinfo(args.userName));

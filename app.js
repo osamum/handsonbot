@@ -12,6 +12,29 @@ app.use(express.static('public'));
 // JSON ボディを解析するためのミドルウェア
 app.use(express.json());
 
+//クライアント情報を出力 (Web Server としてのログ)
+// 解析ツールでの利用を想定して構造化して出力
+app.use((req, res, next) => {
+    const start = Date.now();
+    res.on('finish', () => {
+        const duration = Date.now() - start;
+        const log = {
+            timestamp: new Date().toISOString(),
+            ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+            method: req.method,
+            url: req.originalUrl,
+            protocol: req.protocol,
+            status: res.statusCode,
+            responseTimeMs: duration,
+            userAgent: req.headers['user-agent'],
+            referer: req.headers['referer'] || '-',
+            contentLength: res.getHeader('Content-Length') || 0
+        };
+        console.log(JSON.stringify(log));
+    });
+
+    next();
+});
 
 // postMessage API
 app.post('/postMessage', async (req, res) => {
@@ -46,12 +69,11 @@ async function chat(inputString) {
     } else {
         imageUrls = getImageUrls(inputString);
         if (rag.isAvailable) {
-
             const findResult = await rag.findIndex(inputString);
             if (inputString === findResult) {
                 return await if_Idontknow(inputString, await lm.sendMessage(inputString, imageUrls));
             } else {
-                return findResult;
+                return await lm.sendMessage(findResult, imageUrls)
             }
         } else if (webSearch.isAvailable) {
             return await if_Idontknow(inputString, await lm.sendMessage(inputString, imageUrls));
