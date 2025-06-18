@@ -183,15 +183,4 @@ async function sendFunctionResult(returnMessage) {
     return await sendMessage();
 }
 
-function calculateToken() {
-    //console.log('tokens:' + countTokens(message));
-
-    /*let totalSize = 0;
-    messages.forEach(message => {
-        totalSize = totalSize + countTokens(message);
-    }); 
-    */
-    //console.log(countTokens(messages));
-}
-
 module.exports = { sendMessage, resetConversation };
