@@ -17,7 +17,7 @@ const embedding_settings = JSON.parse(process.env['EMBEDDING_SETTINGS']);
 const embedding_deployment = embedding_settings.deployName;
 const apiVersion = embedding_settings.apiVersion;
 
-let isAvailable = embedding_endpoint && embedding_apiKey && search_endpoint && search_apiKey ? true : false;
+let isAvailable = search_endpoint && search_apiKey ? true : false;
 
 //テキストをベクトルデータに変換する関数
 async function getEmbedding(text) {
