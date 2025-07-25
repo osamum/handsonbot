@@ -45,7 +45,7 @@ async function findIndex(queryText) {
             return queryText;
         }
     } catch (error) {
-        //console.error('Error in findIndex:', error);
+        console.error('Error in findIndex(RAG.js)', error.message);
         return error.message;
     }
 }

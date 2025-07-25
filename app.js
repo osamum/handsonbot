@@ -54,6 +54,18 @@ app.post('/postMessage', async (req, res) => {
     }
 });
 
+ // 演習用に意図的にエラーを発生させる
+app.get('/error', (req, res, next) => {
+  next(new Error('演習用の内部エラー'));
+});
+
+// エラーハンドリングミドルウェア
+app.use((err, req, res, next) => {
+  console.error(err.stack); // ログ出力
+  res.status(500).send('Something broke! (HTTP 500)');
+});
+
+
 // サーバーの起動
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);

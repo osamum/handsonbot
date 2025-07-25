@@ -79,7 +79,8 @@ async function sendMessage(message, imageUrls) {
         }
 
     } catch (error) {
-        return error.message;
+        console.log('Error in sendMessage(lm.js)', error.message);
+        return 'メッセージが正しく処理できませんでした。';
     }
 
 }
