@@ -40,12 +40,12 @@ async function findIndex(queryText) {
             console.log('Found it in RAG data.');
             return '以下の [question] の内容に対し、[content]の内容を使用して回答してください。'
                 + 'ただし[question]に対し[content]の内容に回答に必要な情報がないと判断した場合は[content]の内容を無視して回答してください\n\n'
-                + `[question]\n${queryText}\n\n[content]\n${result.document.chunk}`;
+                + `[question]\n${queryText}\n\n[content]\n${result.document.content}`;
         } else {
             return queryText;
         }
     } catch (error) {
-        //console.error('Error in findIndex:', error);
+        console.error('Error in findIndex(RAG.js)', error.message);
         return error.message;
     }
 }
