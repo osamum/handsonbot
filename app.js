@@ -1,7 +1,19 @@
 
+/*
 const rag = require('./AOAI/rag.js');
 const lm = require('./AOAI/lm.js');
 const webSearch = require('./AOAI/webSearch.js')
+*/
+//Azure KeyVault を使用する場合
+let rag, lm, webSearch;
+const keyManager = require('./keymgr.js');
+(async () => {
+    await keyManager.setSecretEnv();
+    rag = require('./AOAI/rag.js');
+    lm = require('./AOAI/lm.js');
+    webSearch = require('./AOAI/webSearch.js')
+})();
+
 const express = require('express');
 
 const app = express();
@@ -54,15 +66,15 @@ app.post('/postMessage', async (req, res) => {
     }
 });
 
- // 演習用に意図的にエラーを発生させる
+// 演習用に意図的にエラーを発生させる
 app.get('/error', (req, res, next) => {
-  next(new Error('演習用の内部エラー'));
+    next(new Error('演習用の内部エラー'));
 });
 
 // エラーハンドリングミドルウェア
 app.use((err, req, res, next) => {
-  console.error(err.stack); // ログ出力
-  res.status(500).send('Something broke! (HTTP 500)');
+    console.error(err.stack); // ログ出力
+    res.status(500).send('Something broke! (HTTP 500)');
 });
 
 
