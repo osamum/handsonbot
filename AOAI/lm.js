@@ -7,6 +7,13 @@ const imageGen = require('./imgGen');
 
 const endpoint = process.env['AZURE_OPENAI_ENDPOINT'];
 const apiKey = process.env['AZURE_OPENAI_API_KEY'];
+
+if(apiKey){
+    console.log("API Key is set:" + apiKey);
+}else{
+    console.log("API Key is not set");
+}
+
 //設定情報をロード
 const settings = JSON.parse(process.env['LM_SETTINGS']);
 
