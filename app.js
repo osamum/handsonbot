@@ -1,10 +1,11 @@
 
-/*
+//API Key もしくはマネージド ID を使用する場合
 const rag = require('./AOAI/rag.js');
 const lm = require('./AOAI/lm.js');
 const webSearch = require('./AOAI/webSearch.js')
-*/
+
 //Azure KeyVault を使用する場合
+/*
 let rag, lm, webSearch;
 const keyManager = require('./keymgr.js');
 (async () => {
@@ -13,6 +14,7 @@ const keyManager = require('./keymgr.js');
     lm = require('./AOAI/lm.js');
     webSearch = require('./AOAI/webSearch.js')
 })();
+*/
 
 const express = require('express');
 

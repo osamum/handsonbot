@@ -1,3 +1,14 @@
+// Azure マネージド ID を使用した認証    
+const {
+    DefaultAzureCredential,
+    getBearerTokenProvider
+} = require("@azure/identity");
+
+// keyless authentication    
+const credential = new DefaultAzureCredential();
+const scope = "https://cognitiveservices.azure.com/.default";
+const azureADTokenProvider = getBearerTokenProvider(credential, scope);
+
 const { AzureOpenAI } = require('openai');
 const { SearchClient, AzureKeyCredential } = require('@azure/search-documents');
 
@@ -6,10 +17,10 @@ dotenv.config();
 
 //埋め込み用のエンドポイントとキーが個別に指定されている場合はそれを読む
 const embedding_endpoint = process.env['EMBEDDING_ENDPOINT'] || process.env['AZURE_OPENAI_ENDPOINT'];
-const embedding_apiKey = process.env['EMBEDDING_API_KEY'] || process.env['AZURE_OPENAI_API_KEY'];
+//const embedding_apiKey = process.env['EMBEDDING_API_KEY'] || process.env['AZURE_OPENAI_API_KEY'];
 
 const search_endpoint = process.env['SEARCH_ENDPOINT'];
-const search_apiKey = process.env['SEARCH_API_KEY'];
+//const search_apiKey = process.env['SEARCH_API_KEY'];
 
 //インデックス名その他の設定値を取得
 const settings = JSON.parse(process.env['SEARCH_SETTINGS']);
@@ -17,12 +28,12 @@ const embedding_settings = JSON.parse(process.env['EMBEDDING_SETTINGS']);
 const embedding_deployment = embedding_settings.deployName;
 const apiVersion = embedding_settings.apiVersion;
 
-let isAvailable = search_endpoint && search_apiKey ? true : false;
+let isAvailable = search_endpoint ? true : false;
 
 //テキストをベクトルデータに変換する関数
 async function getEmbedding(text) {
-    //埋め込みモデルのクライアントを作成
-    const embeddingClient = new AzureOpenAI({ embedding_endpoint, embedding_apiKey, apiVersion, deployment: embedding_deployment });
+    //埋め込みモデルのクライアントを作成  (Azure マネージド ID を使用した認証)
+    const embeddingClient = new AzureOpenAI({ endpoint: embedding_endpoint, apiKey: '', azureADTokenProvider, deployment: embedding_deployment, apiVersion });
     const embeddings = await embeddingClient.embeddings.create({ input: text, model: '' });
     return embeddings.data[0].embedding;
 }
@@ -54,8 +65,8 @@ async function findIndex(queryText) {
 async function searchWithVectorQuery(vectorQuery, queryText) {
     const search_fieldName = settings.fieldName;
     const search_indexName = settings.indexName;
-    //Azure AI Search のクライアントを作成
-    const searchClient = new SearchClient(search_endpoint, search_indexName, new AzureKeyCredential(search_apiKey));
+    //Azure AI Search のクライアントを作成 (Azure マネージド ID を使用した認証)
+    const searchClient = new SearchClient(search_endpoint, search_indexName, credential);
     const searchResults = await searchClient.search(queryText, {
         vector: {
             fields: [search_fieldName],

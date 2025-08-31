@@ -1,8 +1,18 @@
+// Azure マネージド ID を使用した認証    
+const { 
+    DefaultAzureCredential, 
+    getBearerTokenProvider 
+} = require("@azure/identity");
+
+const credential = new DefaultAzureCredential();
+const scope = "https://cognitiveservices.azure.com/.default";
+const azureADTokenProvider = getBearerTokenProvider(credential, scope);
+
 const { AzureOpenAI } = require('openai');
 const dotenv = require('dotenv');
 dotenv.config();
 const endpoint = process.env['IMAGE_GENERATOR_ENDPOINT'] || process.env['AZURE_OPENAI_ENDPOINT'];
-const apiKey = process.env['IMAGE_GENERATOR_API_KEY'] || process.env['AZURE_OPENAI_API_KEY'];
+//const apiKey = process.env['IMAGE_GENERATOR_API_KEY'] || process.env['AZURE_OPENAI_API_KEY'];
 let settings = null,isAvailable = false;
 const settingJSON = process.env['IMAGE_GENERATOR_SETTINGS'];
 if(settingJSON){
@@ -19,7 +29,8 @@ async function ganarateImage(prompt) {
     const n = 1; //生成する画像の枚数　dall-e-3 は 1 枚のみ
 
     try {
-        const client = new AzureOpenAI({ endpoint, apiKey, apiVersion, deployment: deploymentName });
+        //Azure OpenAI クライアントの初期化 (Azure マネージド ID を使用した認証)
+        const client = new AzureOpenAI({ endpoint, apiKey:'',azureADTokenProvider, deployment, apiVersion });
         const results = await client.images.generate({
             prompt,
             size: size,

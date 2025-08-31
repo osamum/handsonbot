@@ -1,3 +1,13 @@
+// Azure マネージド ID を使用した認証    
+const { 
+DefaultAzureCredential, 
+getBearerTokenProvider 
+} = require("@azure/identity");
+
+const credential = new DefaultAzureCredential();
+const scope = "https://cognitiveservices.azure.com/.default";
+const azureADTokenProvider = getBearerTokenProvider(credential, scope);
+
 //ライブラリの参照
 const { AzureOpenAI } = require('openai');
 const dotenv = require('dotenv');
@@ -6,13 +16,7 @@ const myFunctions = require('./funcs');
 const imageGen = require('./imgGen');
 
 const endpoint = process.env['AZURE_OPENAI_ENDPOINT'];
-const apiKey = process.env['AZURE_OPENAI_API_KEY'];
-
-if(apiKey){
-    console.log("API Key is set:" + apiKey);
-}else{
-    console.log("API Key is not set");
-}
+//const apiKey = process.env['AZURE_OPENAI_API_KEY'];
 
 //設定情報をロード
 const settings = JSON.parse(process.env['LM_SETTINGS']);
@@ -69,7 +73,8 @@ async function sendMessage(message, imageUrls) {
     try {
         const deployment = settings.deploymentName;
         const apiVersion = settings.apiVersion;
-        const client = new AzureOpenAI({ endpoint, apiKey, apiVersion, deployment });
+        //Azure OpenAI クライアントの初期化 (Azure マネージド ID を使用した認証)
+        const client = new AzureOpenAI({ endpoint, apiKey:'',azureADTokenProvider, deployment, apiVersion });
         const result = await client.chat.completions.create(body);
         for (const choice of result.choices) {
             if (choice.message.tool_calls) {
